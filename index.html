@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kekeletso Felicity Mosibi | Instructional Designer & L&D Specialist</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+  :root{
+    --bg:#0d0716;
+    --bg2:#150b24;
+    --card:rgba(255,255,255,.045);
+    --border:rgba(255,255,255,.09);
+    --accent:#c084fc;
+    --accent2:#f472b6;
+    --grad:linear-gradient(135deg,#c084fc,#f472b6);
+    --text:#ede9f7;
+    --muted:#a89cc0;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+  ::selection{background:#c084fc55}
+
+  /* ambient glows */
+  .glow{position:fixed;border-radius:50%;filter:blur(120px);opacity:.35;pointer-events:none;z-index:0}
+  .glow.g1{width:520px;height:520px;background:#7c3aed;top:-140px;right:-100px}
+  .glow.g2{width:420px;height:420px;background:#db2777;bottom:-120px;left:-120px}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;
+    padding:18px 6vw;background:rgba(13,7,22,.7);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+  .logo{font-weight:800;font-size:1.25rem;letter-spacing:.5px}
+  .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  nav ul{display:flex;gap:28px;list-style:none}
+  nav a{color:var(--muted);text-decoration:none;font-size:.92rem;font-weight:500;transition:color .25s}
+  nav a:hover{color:var(--accent)}
+  .nav-cta{padding:9px 20px;border-radius:99px;background:var(--grad);color:#fff!important;font-weight:600}
+
+  /* HERO */
+  .hero{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr;align-items:center;gap:20px;
+    padding:120px 6vw 60px;position:relative;z-index:1}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:99px;border:1px solid var(--border);
+    background:var(--card);font-size:.82rem;color:var(--accent);margin-bottom:22px}
+  .eyebrow::before{content:"";width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 10px #34d399}
+  h1{font-size:clamp(2.4rem,4.6vw,4rem);line-height:1.08;font-weight:800;margin-bottom:18px}
+  h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .roles{font-size:1.12rem;color:var(--muted);margin-bottom:14px;min-height:1.8em}
+  .roles b{color:var(--accent2);font-weight:600}
+  .hero p.sub{color:var(--muted);max-width:540px;margin-bottom:32px}
+  .btns{display:flex;gap:16px;flex-wrap:wrap}
+  .btn{padding:14px 30px;border-radius:99px;font-weight:600;text-decoration:none;font-size:.95rem;transition:transform .25s,box-shadow .25s}
+  .btn.primary{background:var(--grad);color:#fff;box-shadow:0 8px 30px #c084fc44}
+  .btn.ghost{border:1px solid var(--border);color:var(--text);background:var(--card)}
+  .btn:hover{transform:translateY(-3px)}
+  .hero-stats{display:flex;gap:38px;margin-top:46px;flex-wrap:wrap}
+  .stat b{font-size:1.7rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{display:block;font-size:.82rem;color:var(--muted)}
+
+  #canvas-wrap{position:relative;height:min(78vh,640px);border-radius:28px;overflow:hidden}
+  #canvas-wrap canvas{display:block}
+  .canvas-tip{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:.75rem;color:var(--muted);opacity:.7;pointer-events:none}
+
+  /* SECTIONS */
+  section{padding:96px 6vw;position:relative;z-index:1;max-width:1200px;margin:0 auto}
+  .sec-tag{color:var(--accent2);font-weight:600;font-size:.85rem;letter-spacing:2.5px;text-transform:uppercase}
+  h2{font-size:clamp(1.7rem,3vw,2.5rem);font-weight:800;margin:10px 0 40px}
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity .8s ease,transform .8s ease}
+  .reveal.on{opacity:1;transform:none}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1.3fr .9fr;gap:40px;align-items:start}
+  .about-grid p{color:var(--muted);margin-bottom:16px;font-size:1.02rem}
+  .about-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:28px;backdrop-filter:blur(10px)}
+  .about-card h3{font-size:1rem;margin-bottom:16px;color:var(--accent)}
+  .about-card li{list-style:none;padding:9px 0;border-bottom:1px dashed var(--border);color:var(--muted);font-size:.93rem;display:flex;gap:10px}
+  .about-card li:last-child{border:none}
+  .about-card li::before{content:"◆";color:var(--accent2);font-size:.7rem;margin-top:5px}
+
+  /* TIMELINE */
+  .timeline{position:relative;margin-left:12px}
+  .timeline::before{content:"";position:absolute;left:0;top:6px;bottom:6px;width:2px;background:linear-gradient(#c084fc,#f472b6)}
+  .titem{position:relative;padding:0 0 44px 38px}
+  .titem:last-child{padding-bottom:0}
+  .titem::before{content:"";position:absolute;left:-7px;top:6px;width:16px;height:16px;border-radius:50%;
+    background:var(--bg);border:3px solid var(--accent);box-shadow:0 0 14px #c084fc88}
+  .titem .when{font-size:.8rem;color:var(--accent2);font-weight:600;letter-spacing:1px;text-transform:uppercase}
+  .titem h3{font-size:1.22rem;margin:6px 0 2px}
+  .titem .org{color:var(--accent);font-weight:600;font-size:.95rem;margin-bottom:12px}
+  .titem ul{margin-left:18px;color:var(--muted);font-size:.94rem}
+  .titem ul li{margin-bottom:6px}
+
+  /* SKILLS */
+  .skills-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:22px}
+  .skill-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:26px;transition:transform .3s,border-color .3s;backdrop-filter:blur(10px)}
+  .skill-card:hover{transform:translateY(-6px);border-color:#c084fc66}
+  .skill-card .ico{width:48px;height:48px;border-radius:14px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:16px}
+  .skill-card h3{font-size:1.05rem;margin-bottom:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:5px 13px;border-radius:99px;background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.25);font-size:.78rem;color:#d8c7f5}
+
+  /* EDUCATION */
+  .edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .edu-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;backdrop-filter:blur(10px)}
+  .edu-card .yr{font-size:.8rem;color:var(--accent2);font-weight:700;letter-spacing:1px}
+  .edu-card h3{margin:8px 0 4px;font-size:1.12rem}
+  .edu-card .inst{color:var(--accent);font-size:.9rem;font-weight:600;margin-bottom:12px}
+  .edu-card p{color:var(--muted);font-size:.9rem}
+  .certs{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+  .cert{padding:10px 18px;border-radius:14px;background:var(--card);border:1px solid var(--border);font-size:.85rem;color:var(--muted)}
+  .cert b{color:var(--accent)}
+
+  /* CONTACT */
+  .contact-box{background:linear-gradient(135deg,rgba(124,58,237,.16),rgba(219,39,119,.14));border:1px solid var(--border);
+    border-radius:28px;padding:60px 8%;text-align:center}
+  .contact-box p{color:var(--muted);max-width:520px;margin:0 auto 32px}
+  .contact-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+
+  footer{text-align:center;padding:34px;color:var(--muted);font-size:.82rem;border-top:1px solid var(--border);position:relative;z-index:1}
+
+  @media(max-width:900px){
+    .hero{grid-template-columns:1fr;padding-top:100px}
+    #canvas-wrap{height:420px;order:-1;margin-top:20px}
+    nav ul{display:none}
+    .about-grid,.edu-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="glow g1"></div><div class="glow g2"></div>
+
+<nav>
+  <div class="logo">Kekeletso<span>.</span></div>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact" class="nav-cta">Contact</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">Open to opportunities · Johannesburg, SA</div>
+    <h1>Hi, I'm <span class="grad">Kekeletso Felicity Mosibi</span></h1>
+    <div class="roles">I craft <b id="typed">learning experiences</b><span style="color:var(--accent2)">|</span></div>
+    <p class="sub">Learning & Development Coordinator and Instructional Designer who bridges L&D with data analytics. With a Postgraduate Diploma in Business Management from Wits Business School, I design engaging training with ADDIE and Articulate 360 — and turn learning data into insight with SQL, Power BI and data storytelling.</p>
+    <div class="btns">
+      <a class="btn primary" href="#contact">Get in touch</a>
+      <a class="btn ghost" href="#experience">View my work</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat"><b>3+</b><span>Years in L&D & design</span></div>
+      <div class="stat"><b>4</b><span>Organisations served</span></div>
+      <div class="stat"><b>6+</b><span>Certificates & trainings</span></div>
+    </div>
+  </div>
+  <div id="canvas-wrap"><div class="canvas-tip">✨ Move your mouse — she follows!</div></div>
+</header>
+
+<section id="about">
+  <div class="sec-tag">About me</div>
+  <h2 class="reveal">Designing learning that <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent">people love</span></h2>
+  <div class="about-grid">
+    <div class="reveal">
+      <p>I hold a Postgraduate Diploma in Business Management (Business Administration) from Wits Business School and a Bachelor of Education in Psychology from the University of the Witwatersrand.</p>
+      <p>Reliable and self-motivated, I bridge Learning & Development with data analytics — designing engaging training and coaching programmes, then turning learning and business data into actionable insight through SQL, Power BI, data storytelling and visualisation, backed by root cause analysis, critical thinking and risk reporting.</p>
+      <p>Currently a Learning & Development Coordinator, I build training programmes around Artificial Intelligence, business systems and digital tools, manage a Learning Academy end-to-end, and design SOPs that keep knowledge flowing. With earlier experience at PRP Solutions, Discovery and Wits, I pair instructional design with data skills — SQL, Power BI and data storytelling — to prove that learning works.</p>
+    </div>
+    <div class="about-card reveal">
+      <h3>What I'm passionate about</h3>
+      <ul>
+        <li>Instructional Design & eLearning</li>
+        <li>Learning & Development</li>
+        <li>AI & Digital Tools Training</li>
+        <li>Data Analytics & Storytelling</li>
+        <li>Corporate Training & Communication</li>
+        <li>UI/UX Design & Product Development</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="sec-tag">Career journey</div>
+  <h2 class="reveal">Work Experience</h2>
+  <div class="timeline">
+    <div class="titem reveal">
+      <div class="when">May 2026 — Present</div>
+      <h3>Learning & Development Coordinator</h3>
+      <div class="org">Current Role</div>
+      <ul>
+        <li>Develop and maintain training programmes focused on Artificial Intelligence (AI), business systems, digital tools and operational best practices.</li>
+        <li>Manage the organisation's Learning Academy — creating, organising and maintaining learning content, courses, learning paths and training resources.</li>
+        <li>Design, document and maintain Standard Operating Procedures (SOPs) for consistent processes and knowledge sharing.</li>
+        <li>Coordinate onboarding and continuous learning programmes so employees acquire the knowledge and skills required for their roles.</li>
+        <li>Evaluate training outcomes through assessments, learner feedback and performance metrics, implementing continuous improvements.</li>
+      </ul>
+    </div>
+    <div class="titem reveal">
+      <div class="when">Jul 2025 — May 2026</div>
+      <h3>Support, Projects & Training Consultant</h3>
+      <div class="org">PRP Solutions</div>
+      <ul>
+        <li>Provided technical and customer support to clients, ensuring timely resolution of inquiries and issues.</li>
+        <li>Assisted in planning, coordinating and executing projects, contributing to timelines and deliverables.</li>
+        <li>Developed and delivered training materials and sessions that deepened product and process knowledge.</li>
+      </ul>
+    </div>
+    <div class="titem reveal">
+      <div class="when">Jun — Dec 2024</div>
+      <h3>L&D Instructional Designer Consultant</h3>
+      <div class="org">Discovery Limited</div>
+      <ul>
+        <li>Designed interactive training materials — eLearning modules, guides, professional development programmes and presentations.</li>
+        <li>Planned Discovery Vitality programmes using instructional design principles for learner-centred content.</li>
+        <li>Constructed Group Compliance Induction courses and a content framework that standardised language across content.</li>
+        <li>Maintained and updated Discovery Vitality content and collaborated with stakeholders to enhance employee skills across the organisation.</li>
+      </ul>
+    </div>
+    <div class="titem reveal">
+      <div class="when">Feb 2023 — Dec 2024</div>
+      <h3>Mentor — eLearning Developer</h3>
+      <div class="org">University of the Witwatersrand, Development & Leadership Unit</div>
+      <ul>
+        <li>Mentored students in setting and achieving educational and career goals.</li>
+        <li>Facilitated workshops and seminars building problem-solving, decision-making and critical thinking.</li>
+        <li>Developed training lessons, coaching sessions, user manuals and guides.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="sec-tag">Toolbox</div>
+  <h2 class="reveal">Skills & Expertise</h2>
+  <div class="skills-grid">
+    <div class="skill-card reveal">
+      <div class="ico">📊</div>
+      <h3>Data & Analytics</h3>
+      <div class="chips"><span class="chip">SQL</span><span class="chip">Power BI</span><span class="chip">Data Storytelling</span><span class="chip">Data Visualization</span><span class="chip">Data Cleaning & Transformation</span><span class="chip">ETL Processes</span><span class="chip">Data Modelling</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="ico">🎓</div>
+      <h3>Instructional Design</h3>
+      <div class="chips"><span class="chip">ADDIE Model</span><span class="chip">Articulate 360</span><span class="chip">Training & Coaching</span><span class="chip">Learning Academy / LMS</span><span class="chip">SOP Design</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="ico">🧠</div>
+      <h3>Analysis & Thinking</h3>
+      <div class="chips"><span class="chip">Root Cause Analysis</span><span class="chip">Problem Solving</span><span class="chip">Critical Thinking</span><span class="chip">Risk & Reporting</span></div>
+    </div>
+    <div class="skill-card reveal">
+      <div class="ico">💼</div>
+      <h3>Tools & Communication</h3>
+      <div class="chips"><span class="chip">Advanced Microsoft Excel</span><span class="chip">Microsoft Office</span><span class="chip">Communication & Presentation</span><span class="chip">Collaboration & Teamwork</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="sec-tag">Foundation</div>
+  <h2 class="reveal">Education & Certifications</h2>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="yr">2024</div>
+      <h3>Postgraduate Diploma in Business Management</h3>
+      <div class="inst">Wits Business School, University of the Witwatersrand</div>
+      <p>Business Administration — Economics, Financial Management Accounting, Operations, Statistical Problem-Solving & Decision Making, HR & Organizational Design, Services Industry Management, Entrepreneurial & Strategic Management, Customer Experience (CX).</p>
+    </div>
+    <div class="edu-card reveal">
+      <div class="yr">2020 — 2023</div>
+      <h3>Bachelor of Education — Psychology</h3>
+      <div class="inst">University of the Witwatersrand</div>
+      <p>English Major. Curriculum development, eLearning development, culture & engagement initiatives, assessment & evaluation, compliance and regulatory training.</p>
+    </div>
+  </div>
+  <div class="certs reveal">
+    <div class="cert"><b>2024</b> · Instructional Designer</div>
+    <div class="cert"><b>2024</b> · UI/UX Design — UX Copywriting</div>
+    <div class="cert"><b>2023</b> · First Class: Being a Teacher</div>
+    <div class="cert"><b>2022</b> · First Class: Geography 3 & Teaching Experience 3&4</div>
+    <div class="cert"><b>2022</b> · Financial Planning & Entrepreneurship — Wits</div>
+    <div class="cert"><b>2021</b> · Information & Computer Literacy (ICT) — Wits</div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="contact-box reveal">
+    <div class="sec-tag">Contact</div>
+    <h2>Let's build something great together</h2>
+    <p>Whether it's a learning experience, a training programme or a UX project — I'd love to hear from you.</p>
+    <div class="contact-links">
+      <a class="btn primary" href="mailto:kekeletsomosibi@gmail.com">✉ kekeletsomosibi@gmail.com</a>
+      <a class="btn ghost" href="tel:+27607046379">📞 060 704 6379</a>
+      <a class="btn ghost" href="https://www.linkedin.com/in/kekeletso-mosibi-292259243" target="_blank" rel="noopener">in LinkedIn</a>
+    </div>
+    <p style="margin-top:26px;font-size:.85rem">📍 23 Jorisson Street, Johannesburg, 2001</p>
+  </div>
+</section>
+
+<footer>© 2026 Kekeletso Felicity Mosibi · Designed with 💜 & Three.js</footer>
+
+<script>
+/* ---------- typing effect ---------- */
+const phrases=["learning experiences","AI training programmes","data stories","eLearning modules","engaging content"];
+let pi=0,ci=0,del=false;
+const typedEl=document.getElementById('typed');
+(function type(){
+  const p=phrases[pi];
+  typedEl.textContent=p.slice(0,ci);
+  if(!del){ci++;if(ci>p.length){del=true;setTimeout(type,1600);return}}
+  else{ci--;if(ci===0){del=false;pi=(pi+1)%phrases.length}}
+  setTimeout(type,del?38:80);
+})();
+
+/* ---------- scroll reveal ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on')}),{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ---------- 3D girl (Three.js) ---------- */
+const wrap=document.getElementById('canvas-wrap');
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(38,wrap.clientWidth/wrap.clientHeight,.1,100);
+camera.position.set(0,1.55,7.2);
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setSize(wrap.clientWidth,wrap.clientHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+wrap.prepend(renderer.domElement);
+
+/* lights */
+scene.add(new THREE.AmbientLight(0xffffff,.55));
+const key=new THREE.DirectionalLight(0xffffff,.9);key.position.set(4,6,5);scene.add(key);
+const pink=new THREE.PointLight(0xf472b6,1.1,20);pink.position.set(-4,2,3);scene.add(pink);
+const purple=new THREE.PointLight(0xa855f7,1.2,20);purple.position.set(4,3,-2);scene.add(purple);
+
+/* materials */
+const M=(c,r=.6)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:.08});
+const skin=M(0x9c6644,.55), hairM=M(0x241430,.85),
+      dressM=new THREE.MeshStandardMaterial({color:0xa855f7,roughness:.45,metalness:.15}),
+      dressM2=new THREE.MeshStandardMaterial({color:0xec4899,roughness:.45,metalness:.15}),
+      white=M(0xffffff,.3), dark=M(0x1a1025,.4), shoe=M(0xf472b6,.4);
+
+const girl=new THREE.Group();scene.add(girl);
+
+/* head */
+const head=new THREE.Group();head.position.y=2.42;girl.add(head);
+head.add(new THREE.Mesh(new THREE.SphereGeometry(.62,32,32),skin));
+/* hair cap */
+const cap=new THREE.Mesh(new THREE.SphereGeometry(.66,32,32,0,Math.PI*2,0,Math.PI*.55),hairM);
+cap.position.y=.06;cap.scale.z=1.04;head.add(cap);
+/* afro puffs */
+const puffL=new THREE.Mesh(new THREE.SphereGeometry(.3,24,24),hairM);puffL.position.set(-.5,.62,0);head.add(puffL);
+const puffR=puffL.clone();puffR.position.x=.5;head.add(puffR);
+/* puff ties */
+const tieG=new THREE.TorusGeometry(.13,.045,12,24);
+const tieL=new THREE.Mesh(tieG,dressM2);tieL.position.set(-.42,.5,0);tieL.rotation.z=.8;head.add(tieL);
+const tieR=tieL.clone();tieR.position.x=.42;tieR.rotation.z=-.8;head.add(tieR);
+/* eyes */
+[-.22,.22].forEach(x=>{
+  const eyeW=new THREE.Mesh(new THREE.SphereGeometry(.105,16,16),white);eyeW.position.set(x,.03,.55);eyeW.scale.set(1,1.25,.55);head.add(eyeW);
+  const pupil=new THREE.Mesh(new THREE.SphereGeometry(.052,12,12),dark);pupil.position.set(x,.03,.62);head.add(pupil);
+});
+/* blush */
+[-.38,.38].forEach(x=>{
+  const b=new THREE.Mesh(new THREE.CircleGeometry(.075,16),new THREE.MeshBasicMaterial({color:0xf472b6,transparent:true,opacity:.5}));
+  b.position.set(x,-.14,.52);b.lookAt(new THREE.Vector3(x*3,-.4,3));head.add(b);
+});
+/* smile */
+const smile=new THREE.Mesh(new THREE.TorusGeometry(.14,.028,10,24,Math.PI),dark);
+smile.position.set(0,-.2,.56);smile.rotation.z=Math.PI;head.add(smile);
+/* neck */
+const neck=new THREE.Mesh(new THREE.CylinderGeometry(.13,.15,.3,16),skin);neck.position.y=1.86;girl.add(neck);
+
+/* dress body */
+const torso=new THREE.Mesh(new THREE.CylinderGeometry(.3,.44,.75,24),dressM);torso.position.y=1.42;girl.add(torso);
+const skirt=new THREE.Mesh(new THREE.ConeGeometry(.85,1.05,28,1,true),dressM2);skirt.position.y=.68;girl.add(skirt);
+const hem=new THREE.Mesh(new THREE.TorusGeometry(.85,.05,12,32),dressM);hem.position.y=.17;hem.rotation.x=Math.PI/2;girl.add(hem);
+/* belt */
+const belt=new THREE.Mesh(new THREE.TorusGeometry(.42,.05,12,28),white);belt.position.y=1.1;belt.rotation.x=Math.PI/2;girl.add(belt);
+
+/* arms (pivot groups at shoulders) */
+function arm(side){ // side: -1 left, 1 right
+  const g=new THREE.Group();g.position.set(side*.4,1.72,0);
+  const upper=new THREE.Mesh(new THREE.CylinderGeometry(.09,.08,.55,14),dressM);upper.position.y=-.27;g.add(upper);
+  const elbow=new THREE.Group();elbow.position.y=-.55;g.add(elbow);
+  const fore=new THREE.Mesh(new THREE.CylinderGeometry(.075,.07,.5,14),skin);fore.position.y=-.24;elbow.add(fore);
+  const hand=new THREE.Mesh(new THREE.SphereGeometry(.11,14,14),skin);hand.position.y=-.52;elbow.add(hand);
+  girl.add(g);return{g,elbow};
+}
+const armL=arm(-1), armR=arm(1);
+armL.g.rotation.z=.28;armL.elbow.rotation.z=.2;
+
+/* legs */
+[-.2,.2].forEach(x=>{
+  const leg=new THREE.Mesh(new THREE.CylinderGeometry(.09,.08,.55,14),skin);leg.position.set(x,-.02,0);girl.add(leg);
+  const sh=new THREE.Mesh(new THREE.SphereGeometry(.13,14,14),shoe);sh.position.set(x,-.3,.05);sh.scale.set(1,.7,1.4);girl.add(sh);
+});
+
+/* floating platform */
+const disc=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.5,.12,40),
+  new THREE.MeshStandardMaterial({color:0x2a1745,roughness:.4,metalness:.5}));
+disc.position.y=-.48;scene.add(disc);
+const ring=new THREE.Mesh(new THREE.TorusGeometry(1.55,.03,12,60),
+  new THREE.MeshBasicMaterial({color:0xc084fc,transparent:true,opacity:.7}));
+ring.position.y=-.44;ring.rotation.x=Math.PI/2;scene.add(ring);
+const ring2=new THREE.Mesh(new THREE.TorusGeometry(1.85,.02,12,60),
+  new THREE.MeshBasicMaterial({color:0xf472b6,transparent:true,opacity:.4}));
+ring2.position.y=-.5;ring2.rotation.x=Math.PI/2;scene.add(ring2);
+
+/* floating design panels (her craft) */
+const panels=[];
+const panelDefs=[{c:0xc084fc,p:[-1.9,2.6,-.6]},{c:0xf472b6,p:[1.95,3.1,-.8]},{c:0x818cf8,p:[2.1,1.2,-.4]},{c:0xf9a8d4,p:[-2.1,1.1,-.5]}];
+panelDefs.forEach((d,i)=>{
+  const grp=new THREE.Group();grp.position.set(...d.p);
+  const pl=new THREE.Mesh(new THREE.BoxGeometry(.62,.44,.05),
+    new THREE.MeshStandardMaterial({color:0x1c1130,roughness:.35,metalness:.3}));
+  grp.add(pl);
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(.44,.06,.02),new THREE.MeshBasicMaterial({color:d.c}));
+  bar.position.set(-.03,.1,.04);grp.add(bar);
+  const bar2=new THREE.Mesh(new THREE.BoxGeometry(.3,.05,.02),new THREE.MeshBasicMaterial({color:d.c,transparent:true,opacity:.55}));
+  bar2.position.set(-.1,-.02,.04);grp.add(bar2);
+  const dot=new THREE.Mesh(new THREE.CircleGeometry(.045,14),new THREE.MeshBasicMaterial({color:d.c}));
+  dot.position.set(.2,-.12,.04);grp.add(dot);
+  scene.add(grp);panels.push({grp,off:i*1.7});
+});
+
+/* sparkle particles */
+const pGeo=new THREE.BufferGeometry();
+const N=90,pos=new Float32Array(N*3);
+for(let i=0;i<N;i++){pos[i*3]=(Math.random()-.5)*7;pos[i*3+1]=Math.random()*5-.5;pos[i*3+2]=(Math.random()-.5)*4-1}
+pGeo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const stars=new THREE.Points(pGeo,new THREE.PointsMaterial({color:0xe9d5ff,size:.045,transparent:true,opacity:.8}));
+scene.add(stars);
+
+/* mouse parallax */
+let mx=0,my=0;
+addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*2;my=(e.clientY/innerHeight-.5)*2});
+
+/* animate */
+const clock=new THREE.Clock();
+(function loop(){
+  requestAnimationFrame(loop);
+  const t=clock.getElapsedTime();
+  /* gentle bob & sway */
+  girl.position.y=Math.sin
